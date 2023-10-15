@@ -12,6 +12,7 @@ from models.amenity import Amenity
 from models.state import State
 from models.review import Review
 
+
 class FileStorage:
     """ Class that serializes"""
     __file_path = "file.json"
@@ -28,13 +29,16 @@ class FileStorage:
 
     def save(self):
         """ Serializes objects to the JSONf """
-        obj_dict = {key: value.to_dict() for key, value in FileStorage.__objects.items()}
+        obj_dict = {
+                key: value.to_dict() for key,
+                value in FileStorage.__objects.items()
+                }
         with open(FileStorage.__file_path, 'w') as f:
             json.dump(obj_dict, f)
 
     def reload(self):
         """ Deserializes objects from the JSONf """
-         class_mapping = {
+        class_mapping = {
            'BaseModel': BaseModel,
            'User': User,
            'Place': Place,
@@ -43,13 +47,12 @@ class FileStorage:
            'State': State,
            'Review': Review
          }
-
         if os.path.exists(FileStorage.__file_path):
-           with open(FileStorage.__file_path, 'r') as f:
-              obj_dict = json.load(f)
-              for key, value in obj_dict.items():
-                  class_name, obj_id = key.split('.')
-                  cls = class_mapping.get(class_name)
-                  if cls:
-                      new_obj = cls(**value)
-                      self.new(new_obj)
+            with open(FileStorage.__file_path, 'r') as f:
+                obj_dict = json.load(f)
+                for key, value in obj_dict.items():
+                    class_name, obj_id = key.split('.')
+                    cls = class_mapping.get(class_name)
+                    if cls:
+                        new_obj = cls(**value)
+                        self.new(new_obj)
