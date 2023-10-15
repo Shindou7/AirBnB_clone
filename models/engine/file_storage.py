@@ -5,6 +5,7 @@ This class serializes instances to a JSON
 import json
 import os
 
+
 class FileStorage:
     """ Class that serializes"""
     __file_path = "file.json"

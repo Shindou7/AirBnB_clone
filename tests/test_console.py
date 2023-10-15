@@ -16,5 +16,6 @@ class TestConsole(unittest.TestCase):
         output = console_output.getvalue()
         self.assertTrue(len(output) == 10)  # Ensure an ID is printed
 
+
 if __name__ == "__main__":
     unittest.main()
