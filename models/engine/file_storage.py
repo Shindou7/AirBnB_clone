@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 """
-This class serializes instances to a JSON file
-and deserializes JSON file to instances
+This class serializes instances to a JSON
 """
 import json
 import os
@@ -14,27 +13,27 @@ from models.state import State
 from models.review import Review
 
 class FileStorage:
-    """ Class that serializes and deserializes JSON objects """
+    """ Class that serializes"""
     __file_path = "file.json"
     __objects = {}
 
     def all(self):
-        """ Returns the dictionary __objects """
+        """ Returns the dic objects """
         return FileStorage.__objects
 
     def new(self, obj):
-        """ Sets in __objects the obj with key <obj class name>.id """
+        """ Sets in __object """
         key = f"{obj.__class__.__name__}.{obj.id}"
         FileStorage.__objects[key] = obj
 
     def save(self):
-        """ Serializes __objects to the JSON file """
+        """ Serializes objects to the JSONf """
         obj_dict = {key: value.to_dict() for key, value in FileStorage.__objects.items()}
         with open(FileStorage.__file_path, 'w') as f:
             json.dump(obj_dict, f)
 
     def reload(self):
-        """ Deserializes __objects from the JSON file """
+        """ Deserializes objects from the JSONf """
          class_mapping = {
            'BaseModel': BaseModel,
            'User': User,
