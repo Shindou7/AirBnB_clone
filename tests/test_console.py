@@ -3,11 +3,18 @@
 
 import unittest
 import console
-import pycodestyle
-from unittest.mock import patch
 from io import StringIO
-from models.engine.file_storage import FileStorage
-from models.base_model import BaseModel
+from unittest.mock import patch
 
 
 class TestConsole(unittest.TestCase):
+    def test_create_command(self):
+        """Test the 'create' command"""
+        console_output = StringIO()
+        with patch("sys.stdout", console_output):
+            console.HBNBCommand().onecmd("create BaseModel")
+        output = console_output.getvalue()
+        self.assertTrue(len(output) == 10)  # Ensure an ID is printed
+
+if __name__ == "__main__":
+    unittest.main()
