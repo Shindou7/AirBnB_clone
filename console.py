@@ -49,51 +49,51 @@ class HBNBCommand(cmd.Cmd):
     def default(self, arg):
         """Handle unknown commands"""
         arg_parts = parse(arg)
-        if len(arg_parts) >= 2:
+        if len(arg_parts) >= 4 and arg_parts[0] in self.classes:
             class_name = arg_parts[0]
             command = arg_parts[1]
-            if class_name in self.classes:
-                if command == "all()":
-                    return self.do_all(class_name)
-                elif command == "count()":
-                    return self.do_count(class_name)
-                elif len(arg_parts) >= 3:
-                    instance_id = arg_parts[2]
-                    if command == f"show({instance_id})":
-                        return self.do_show(f"{class_name} {instance_id}")
-                    elif command == f"destroy({instance_id})":
-                        return self.do_destroy(f"{class_name} {instance_id}")
-                    elif command.startswith("update(") and command.endswith(")"):
-                        update_command = command[len("update("):-1]
-                        return self.do_update(f"{class_name} {instance_id} {update_command}")
+            instance_id = arg_parts[2]
+            attribute = arg_parts[3]
+            if command == "show":
+                return self.do_show(f"{class_name} {instance_id}")
+            elif command == "destroy":
+                return self.do_destroy(f"{class_name} {instance_id}")
+            elif command == "update" and len(arg_parts) >= 5:
+                value = arg_parts[4]
+                return self.do_update(f"{class_name} {instance_id} {attribute} {value}")
         print("*** Unknown syntax: {}".format(arg))
         return False
 
-    def do_all(self, class_name):
-        """Display string representations of instances or all instances of a class"""
-        all_objs = storage.all()
-        if class_name in self.classes:
-            obj_list = [str(obj) for obj in all_objs.values() if obj.__class__.__name__ == class_name]
-            print(obj_list)
-        else:
-            print("** class doesn't exist **")
+    def do_quit(self, arg):
+        """Exit the program"""
+        return True
 
-    def do_count(self, class_name):
-        """Count instances of a class"""
-        if class_name in self.classes:
-            all_objs = storage.all()
-            count = sum(1 for obj in all_objs.values() if obj.__class__.__name__ == class_name)
-            print(count)
-        else:
+    def do_EOF(self, arg):
+        """Exit the program on EOF"""
+        print("")
+        return True
+
+    def do_create(self, arg):
+        """Create a new instance of a class and print its ID"""
+        arg_parts = parse(arg)
+        if len(arg_parts) == 0:
+            print("** class name missing **")
+        elif arg_parts[0] not in self.classes:
             print("** class doesn't exist **")
+        else:
+            new_instance = self.classes[arg_parts[0]]()
+            new_instance.save()
+            print(new_instance.id)
 
     def do_show(self, arg):
         """Show the string representation of an instance"""
         arg_parts = parse(arg)
-        if len(arg_parts) < 2:
-            print("** instance id missing **")
+        if len(arg_parts) == 0:
+            print("** class name missing **")
         elif arg_parts[0] not in self.classes:
             print("** class doesn't exist **")
+        elif len(arg_parts) < 2:
+            print("** instance id missing **")
         else:
             obj_id = arg_parts[1]
             key = f"{arg_parts[0]}.{obj_id}"
@@ -106,10 +106,12 @@ class HBNBCommand(cmd.Cmd):
     def do_destroy(self, arg):
         """Delete an instance by class name and ID"""
         arg_parts = parse(arg)
-        if len(arg_parts) < 2:
-            print("** instance id missing **")
+        if len(arg_parts) == 0:
+            print("** class name missing **")
         elif arg_parts[0] not in self.classes:
             print("** class doesn't exist **")
+        elif len(arg_parts) < 2:
+            print("** instance id missing **")
         else:
             obj_id = arg_parts[1]
             key = f"{arg_parts[0]}.{obj_id}"
@@ -120,13 +122,40 @@ class HBNBCommand(cmd.Cmd):
             else:
                 print("** no instance found **")
 
-    def do_update(self, arg):
-        """Update an instance's attributes or attributes using a dictionary"""
+    def do_all(self, arg):
+        """Display string representations of instances"""
         arg_parts = parse(arg)
-        if len(arg_parts) < 2:
-            print("** instance id missing **")
+        if len(arg_parts) == 0:
+            all_objs = storage.all()
+            print([str(obj) for obj in all_objs.values()])
         elif arg_parts[0] not in self.classes:
             print("** class doesn't exist **")
+        else:
+            all_objs = storage.all()
+            obj_list = [str(obj) for obj in all_objs.values() if obj.__class__.__name__ == arg_parts[0]]
+            print(obj_list)
+
+    def do_count(self, arg):
+        """Count instances of a class"""
+        arg_parts = parse(arg)
+        if len(arg_parts) == 0:
+            print("** class name missing **")
+        elif arg_parts[0] not in self.classes:
+            print("** class doesn't exist **")
+        else:
+            all_objs = storage.all()
+            count = sum(1 for obj in all_objs.values() if obj.__class__.__name__ == arg_parts[0])
+            print(count)
+
+    def do_update(self, arg):
+        """Update an instance's attributes"""
+        arg_parts = parse(arg)
+        if len(arg_parts) == 0:
+            print("** class name missing **")
+        elif arg_parts[0] not in self.classes:
+            print("** class doesn't exist **")
+        elif len(arg_parts) < 2:
+            print("** instance id missing **")
         else:
             obj_id = arg_parts[1]
             key = f"{arg_parts[0]}.{obj_id}"
@@ -137,17 +166,11 @@ class HBNBCommand(cmd.Cmd):
                     print("** attribute name missing **")
                 elif len(arg_parts) < 4:
                     print("** value missing **")
-                elif len(arg_parts) == 4:
+                else:
                     attr_name = arg_parts[2]
                     attr_value = arg_parts[3]
                     setattr(obj, attr_name, attr_value)
                     obj.save()
-                elif len(arg_parts) == 5 and isinstance(arg_parts[4], dict):
-                    attr_dict = eval(arg_parts[4])
-                    if isinstance(attr_dict, dict):
-                        for key, value in attr_dict.items():
-                            setattr(obj, key, value)
-                        obj.save()
             else:
                 print("** no instance found **")
 
