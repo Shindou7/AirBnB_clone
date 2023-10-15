@@ -6,6 +6,7 @@ import unittest
 from models.place import Place
 import datetime
 
+
 class TestPlace(unittest.TestCase):
     def test_class_exists(self):
         p = Place()
@@ -48,6 +49,7 @@ class TestPlace(unittest.TestCase):
         self.assertIsInstance(p.id, str)
         self.assertIsInstance(p.created_at, datetime.datetime)
         self.assertIsInstance(p.updated_at, datetime.datetime)
+
 
 if __name__ == '__main__':
     unittest.main()

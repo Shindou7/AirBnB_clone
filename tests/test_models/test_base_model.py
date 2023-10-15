@@ -7,13 +7,13 @@ from datetime import datetime
 import time
 import pycodestyle
 
+
 class TestBaseModel0(unittest.TestCase):
     """Test cases for the BaseModel class"""
 
     def setUp(self):
         """Set up a BaseModel instance for testing"""
         self.my_model = BaseModel()
-
 
     def _docstrings(self):
         """Test module, class, and method docstrings"""
@@ -32,8 +32,8 @@ class TestBaseModel0(unittest.TestCase):
 
     def t_str(self):
         """str method of the BaseModel class"""
-        ex_output = f"[BaseModel] ({self.my_model.id}) {self.my_model.__dict__}"
-        self.assertEqual(str(self.my_model), ex_output)
+        ex_Oput = f"[BaseModel] ({self.my_model.id}) {self.my_model.__dict__}"
+        self.assertEqual(str(self.my_model), ex_Oput)
 
     def test_save_updates_updated_at(self):
         """method updates the updated_at attribute"""
@@ -60,6 +60,7 @@ class TestBaseModel0(unittest.TestCase):
         self.assertEqual(self.my_model.my_number, mymodel_json['my_number'])
         self.assertEqual('BaseModel', mymodel_json['__class__'])
         self.assertEqual(self.my_model.id, mymodel_json['id'])
+
 
 if __name__ == "__main__":
     unittest.main()

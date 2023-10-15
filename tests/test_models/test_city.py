@@ -6,6 +6,7 @@ import unittest
 from models.city import City
 import datetime
 
+
 class TestCity(unittest.TestCase):
     def test_class_exists(self):
         c = City()
@@ -30,6 +31,7 @@ class TestCity(unittest.TestCase):
         self.assertIsInstance(c.id, str)
         self.assertIsInstance(c.created_at, datetime.datetime)
         self.assertIsInstance(c.updated_at, datetime.datetime)
+
 
 if __name__ == '__main__':
     unittest.main()

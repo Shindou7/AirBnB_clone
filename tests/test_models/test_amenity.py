@@ -6,6 +6,7 @@ import unittest
 from models.amenity import Amenity
 import datetime
 
+
 class TestAmenity(unittest.TestCase):
     def test_class_exists(self):
         a = Amenity()
@@ -28,6 +29,7 @@ class TestAmenity(unittest.TestCase):
         self.assertIsInstance(a.id, str)
         self.assertIsInstance(a.created_at, datetime.datetime)
         self.assertIsInstance(a.updated_at, datetime.datetime)
+
 
 if __name__ == '__main__':
     unittest.main()

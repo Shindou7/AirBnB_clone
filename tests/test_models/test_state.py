@@ -6,6 +6,7 @@ import unittest
 from models.state import State
 import datetime
 
+
 class TestState(unittest.TestCase):
     def test_class_exists(self):
         s = State()
@@ -28,6 +29,7 @@ class TestState(unittest.TestCase):
         self.assertIsInstance(s.id, str)
         self.assertIsInstance(s.created_at, datetime.datetime)
         self.assertIsInstance(s.updated_at, datetime.datetime)
+
 
 if __name__ == '__main__':
     unittest.main()

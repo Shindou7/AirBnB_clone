@@ -6,6 +6,7 @@ import unittest
 from models.user import User
 import datetime
 
+
 class TestUser(unittest.TestCase):
     def test_class_exists(self):
         u = User()
@@ -34,6 +35,7 @@ class TestUser(unittest.TestCase):
         self.assertIsInstance(u.id, str)
         self.assertIsInstance(u.created_at, datetime.datetime)
         self.assertIsInstance(u.updated_at, datetime.datetime)
+
 
 if __name__ == '__main__':
     unittest.main()

@@ -6,6 +6,7 @@ import unittest
 from models.review import Review
 import datetime
 
+
 class TestReview(unittest.TestCase):
     def test_class_exists(self):
         r = Review()
@@ -32,6 +33,7 @@ class TestReview(unittest.TestCase):
         self.assertIsInstance(r.id, str)
         self.assertIsInstance(r.created_at, datetime.datetime)
         self.assertIsInstance(r.updated_at, datetime.datetime)
+
 
 if __name__ == '__main__':
     unittest.main()
