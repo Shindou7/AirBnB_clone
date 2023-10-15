@@ -47,27 +47,27 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def default(self, arg):
-    """Handle unknown commands"""
-    arg_parts = parse(arg)
-    if len(arg_parts) >= 2:
-        class_name = arg_parts[0]
-        command = arg_parts[1]
-        if class_name in self.classes:
-            if command == "all()":
-                return self.do_all(class_name)
-            elif command == "count()":
-                return self.do_count(class_name)
-            elif len(arg_parts) >= 3:
-                instance_id = arg_parts[2]
-                if command == f"show({instance_id})":
-                    return self.do_show(f"{class_name} {instance_id}")
-                elif command == f"destroy({instance_id})":
-                    return self.do_destroy(f"{class_name} {instance_id}")
-                elif command.startswith("update(") and command.endswith(")"):
-                    update_command = command[len("update("):-1]
-                    return self.do_update(f"{class_name} {instance_id} {update_command}")
-    print("*** Unknown syntax: {}".format(arg))
-    return False
+        """Handle unknown commands"""
+        arg_parts = parse(arg)
+        if len(arg_parts) >= 2:
+            class_name = arg_parts[0]
+            command = arg_parts[1]
+            if class_name in self.classes:
+                if command == "all()":
+                    return self.do_all(class_name)
+                elif command == "count()":
+                    return self.do_count(class_name)
+                elif len(arg_parts) >= 3:
+                    instance_id = arg_parts[2]
+                    if command == f"show({instance_id})":
+                        return self.do_show(f"{class_name} {instance_id}")
+                    elif command == f"destroy({instance_id})":
+                        return self.do_destroy(f"{class_name} {instance_id}")
+                    elif command.startswith("update(") and command.endswith(")"):
+                        update_command = command[len("update("):-1]
+                        return self.do_update(f"{class_name} {instance_id} {update_command}")
+        print("*** Unknown syntax: {}".format(arg))
+        return False
 
     def do_all(self, class_name):
         """Display string representations of instances or all instances of a class"""
