@@ -47,31 +47,30 @@ class HBNBCommand(cmd.Cmd):
         pass
 
     def default(self, arg):
-        """Handle unknown commands"""
-        arg_parts = parse(arg)
-        if len(arg_parts) >= 4 and arg_parts[0] in self.classes:
-            class_name = arg_parts[0]
-            command = arg_parts[1]
-            if command == "all":
-                return self.do_all(class_name)
+    """Handle unknown commands"""
+    arg_parts = parse(arg)
+    if len(arg_parts) >= 2 and arg_parts[0] in self.classes:
+        class_name = arg_parts[0]
+        command = arg_parts[1]
+        if command == "all":
+            return self.do_all(class_name)
+        elif len(arg_parts) >= 3:
             instance_id = arg_parts[2]
             if command == "show":
                 return self.do_show(f"{class_name} {instance_id}")
-            if command == "destroy":
+            elif command == "destroy":
                 return self.do_destroy(f"{class_name} {instance_id}")
-            if command == "update":
-                if len(arg_parts) == 4:
-                    attribute = arg_parts[2]
-                    value = arg_parts[3]
-                    return self.do_update(f"{class_name} {instance_id} {attribute} {value}")
-                elif len(arg_parts) == 5 and arg_parts[3] == "{":
+            elif command == "update" and len(arg_parts) >= 4:
+                if arg_parts[3] == "{":
                     # Handle update with dictionary
                     attr_dict = eval(" ".join(arg_parts[3:]))
                     return self.do_update(f"{class_name} {instance_id} {attr_dict}")
-        print("*** Unknown syntax: {}".format(arg))
-        return False
-
-    # Other methods remain the same
+                elif len(arg_parts) >= 5:
+                    attribute = arg_parts[3]
+                    value = arg_parts[4]
+                    return self.do_update(f"{class_name} {instance_id} {attribute} {value}")
+    print("*** Unknown syntax: {}".format(arg))
+    return False
 
     def do_all(self, class_name):
         """Display string representations of instances or all instances of a class"""
