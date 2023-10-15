@@ -48,21 +48,19 @@ class HBNBCommand(cmd.Cmd):
 
     def default(self, arg):
         """Handle unknown commands"""
-        argdict = {
-            "all": self.do_all,
-            "show": self.do_show,
-            "destroy": self.do_destroy,
-            "count": self.do_count,
-            "update": self.do_update
-        }
-        match = re.search(r"\.", arg)
-        if match:
-            arg_parts = arg.split('.')
-            command, args = arg_parts[1].split('(')
-            args = args.strip(')').split(', ')
-            if command in argdict:
-                full_command = f"{arg_parts[0]} {command} {args[0]} {args[1]}"
-                return argdict[command](full_command)
+        arg_parts = parse(arg)
+        if len(arg_parts) >= 4 and arg_parts[0] in self.classes:
+            class_name = arg_parts[0]
+            command = arg_parts[1]
+            instance_id = arg_parts[2]
+            attribute = arg_parts[3]
+            if command == "show":
+                return self.do_show(f"{class_name} {instance_id}")
+            elif command == "destroy":
+                return self.do_destroy(f"{class_name} {instance_id}")
+            elif command == "update" and len(arg_parts) >= 5:
+                value = arg_parts[4]
+                return self.do_update(f"{class_name} {instance_id} {attribute} {value}")
         print("*** Unknown syntax: {}".format(arg))
         return False
 
