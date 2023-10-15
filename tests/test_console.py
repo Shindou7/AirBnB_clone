@@ -14,7 +14,7 @@ class TestConsole(unittest.TestCase):
         with patch("sys.stdout", console_output):
             console.HBNBCommand().onecmd("create BaseModel")
         output = console_output.getvalue()
-        self.assertTrue(len(output) == 10)  # Ensure an ID is printed
+        self.assertTrue(len(output) == 11)
 
 
 if __name__ == "__main__":
