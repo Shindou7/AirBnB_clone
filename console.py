@@ -143,7 +143,7 @@ class HBNBCommand(cmd.Cmd):
         elif arg_parts[0] not in self.classes:
             print("** class doesn't exist **")
         else:
-            obj_list = self.classes[arg_parts[0]].all()  # Use .all() to get all instances of a class
+            obj_list = self.classes[arg_parts[0]].all()
             print([str(obj) for obj in obj_list])
 
     def do_count(self, arg):
@@ -154,7 +154,7 @@ class HBNBCommand(cmd.Cmd):
         elif arg_parts[0] not in self.classes:
             print("** class doesn't exist **")
         else:
-            count = len(self.classes[arg_parts[0]].all())  # Use .all() to get all instances of a class
+            count = len(self.classes[arg_parts[0]].all())
             print(count)
 
     def do_user_count(self, arg):
@@ -162,7 +162,7 @@ class HBNBCommand(cmd.Cmd):
         count = len(User.all())
         print(count)
 
-      def do_user_destroy(self, arg):
+    def do_user_destroy(self, arg):
         """Destroy an instance of User by ID"""
         arg_parts = parse(arg)
         if len(arg_parts) < 1:
