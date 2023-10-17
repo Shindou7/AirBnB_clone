@@ -49,6 +49,12 @@ class HBNBCommand(cmd.Cmd):
     def default(self, arg):
         """Handle unknown commands"""
         arg_parts = parse(arg)
+        if arg.startswith("User.count()"):
+            return self.do_user_count(arg[len("User.count()"):])
+        if arg.startswith("User.destroy(") and arg.endswith(")"):
+            return self.do_user_destroy(arg[len("User.destroy("):-1])
+        if arg == "User.all()":
+            return self.do_user_all(arg[len("User.all()"):])
         if len(arg_parts) >= 4 and arg_parts[0] in self.classes:
             class_name = arg_parts[0]
             command = arg_parts[1]
@@ -150,7 +156,29 @@ class HBNBCommand(cmd.Cmd):
         else:
             count = len(self.classes[arg_parts[0]].all())  # Use .all() to get all instances of a class
             print(count)
-  
+
+    def do_user_count(self, arg):
+        """Count instances of User"""
+        count = len(User.all())
+        print(count)
+
+      def do_user_destroy(self, arg):
+        """Destroy an instance of User by ID"""
+        arg_parts = parse(arg)
+        if len(arg_parts) < 1:
+            print("** instance id missing **")
+        else:
+            obj_id = arg_parts[0]
+            try:
+                User.destroy(obj_id)
+                print("Instance deleted")
+            except Exception as e:
+                print(str(e))
+
+    def do_user_all(self, arg):
+        """Display all instances of User"""
+        user_list = User.all()
+        print([str(user) for user in user_list])
 
     def do_update(self, arg):
         """Update an instance's attributes"""
