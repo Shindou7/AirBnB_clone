@@ -159,7 +159,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_user_count(self, arg):
         """Count instances of User"""
-        count = len(User.all())
+        count = len([user for user in storage.all(User).values()])
         print(count)
 
     def do_user_destroy(self, arg):
@@ -169,11 +169,14 @@ class HBNBCommand(cmd.Cmd):
             print("** instance id missing **")
         else:
             obj_id = arg_parts[0]
-            try:
-                User.destroy(obj_id)
+            key = f"User.{obj_id}"
+            all_objs = storage.all()
+            if key in all_objs:
+                del all_objs[key]
+                storage.save()
                 print("Instance deleted")
-            except Exception as e:
-                print(str(e))
+            else:
+                print("** no instance found **")
 
     def do_user_all(self, arg):
         """Display all instances of User"""
