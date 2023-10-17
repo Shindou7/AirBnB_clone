@@ -22,12 +22,15 @@ class HBNBCommand(cmd.Cmd):
     """HBNBCommand command interpreter"""
 
     prompt = "(hbnb) "
-
-    def __init__(self):
-        super().__init__()
-        from models.engine.file_storage import FileStorage
-        self.storage = FileStorage()
-        self.storage.reload()
+    classes = {
+        "BaseModel": BaseModel,
+        "User": User,
+        "State": State,
+        "City": City,
+        "Amenity": Amenity,
+        "Place": Place,
+        "Review": Review
+    }
 
     def emptyline(self):
         """Do nothing when an empty line is entered."""
