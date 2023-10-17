@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import cmd
 import re
+from shlex import split
 from models import storage
 from models.base_model import BaseModel
 from models.user import User
@@ -9,6 +10,7 @@ from models.city import City
 from models.place import Place
 from models.amenity import Amenity
 from models.review import Review
+
 
 def parse(arg):
     """Parse a string of arguments and return a list of tokens"""
@@ -24,6 +26,7 @@ def parse(arg):
             tokens.extend(arg.split())
             break
     return tokens
+
 
 class HBNBCommand(cmd.Cmd):
     """HBNBCommand command interpreter"""
@@ -149,5 +152,6 @@ class HBNBCommand(cmd.Cmd):
             else:
                 print("** no instance found **")
 
-if __name__ == "__main__":
+
+if __name__ == "__main":
     HBNBCommand().cmdloop()
