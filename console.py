@@ -1,7 +1,6 @@
 #!/usr/bin/python3
 import cmd
 import re
-from shlex import split
 from models import storage
 from models.base_model import BaseModel
 from models.user import User
