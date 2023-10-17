@@ -67,41 +67,42 @@ class HBNBCommand(cmd.Cmd):
         print("*** Unknown syntax: {}".format(arg))
         return False
 
-    def do_all(self, class_name):
+    def do_all(self, arg):
         """Display string representations of instances"""
-        all_objs = self.storage.all()
-        if class_name not in self.classes:
-            print("** class doesn't exist **")
-        else:
+        arg_parts = parse(arg)
+        if len(arg_parts) == 1 and arg_parts[0] in self.classes:
+            class_name = arg_parts[0]
+            all_objs = self.storage.all()
             obj_list = [str(obj) for obj in all_objs.values() if obj.__class__.__name__ == class_name]
             print(obj_list)
-
-    def do_count(self, class_name):
-        """Count instances of a class"""
-        if class_name not in self.classes:
-            print("** class doesn't exist **")
         else:
+            print("*** Unknown syntax: all")
+
+    def do_count(self, arg):
+        """Count instances of a class"""
+        arg_parts = parse(arg)
+        if len(arg_parts) == 1 and arg_parts[0] in self.classes:
+            class_name = arg_parts[0]
             all_objs = self.storage.all()
             count = sum(1 for obj in all_objs.values() if obj.__class__.__name__ == class_name)
             print(count)
+        else:
+            print("*** Unknown syntax: count")
 
     def do_show(self, arg):
         """Show the string representation of an instance"""
         arg_parts = parse(arg)
-        if len(arg_parts) == 0:
-            print("** class name missing **")
-        elif arg_parts[0] not in self.classes:
-            print("** class doesn't exist **")
-        elif len(arg_parts) < 2:
-            print("** instance id missing **")
-        else:
-            obj_id = arg_parts[1]
-            key = f"{arg_parts[0]}.{obj_id}"
+        if len(arg_parts) == 2 and arg_parts[0] in self.classes:
+            class_name, obj_id = arg_parts
+            key = f"{class_name}.{obj_id}"
             all_objs = self.storage.all()
             if key in all_objs:
                 print(all_objs[key])
             else:
                 print("** no instance found **")
+        else:
+            print("*** Unknown syntax: show")
+
 
     def do_destroy(self, arg):
         """Delete an instance by class name and ID"""
