@@ -11,7 +11,6 @@ from models.place import Place
 from models.amenity import Amenity
 from models.review import Review
 
-
 def parse(arg):
     """Parse a string of arguments and return a list of tokens"""
     tokens = []
@@ -26,7 +25,6 @@ def parse(arg):
             tokens.extend(arg.split())
             break
     return tokens
-
 
 class HBNBCommand(cmd.Cmd):
     """HBNBCommand command interpreter"""
@@ -62,7 +60,7 @@ class HBNBCommand(cmd.Cmd):
             elif command == "destroy" and len(arg_parts) >= 3:
                 instance_id = arg_parts[2]
                 return self.do_destroy(f"{class_name} {instance_id}")
-            elif command == "update" and len(arg_parts) >= 5:
+            elif command == "update" and len(arg_parts) >= 6:
                 instance_id = arg_parts[2]
                 attribute = arg_parts[3]
                 value = arg_parts[4]
@@ -70,7 +68,60 @@ class HBNBCommand(cmd.Cmd):
         print("*** Unknown syntax: {}".format(arg))
         return False
 
-    # Other methods (do_create, do_show, do_destroy, etc.) remain unchanged.
+    def do_all(self, class_name):
+        """Display string representations of instances"""
+        all_objs = storage.all()
+        if class_name not in self.classes:
+            print("** class doesn't exist **")
+        else:
+            obj_list = [str(obj) for obj in all_objs.values() if obj.__class__.__name__ == class_name]
+            print(obj_list)
+
+    def do_count(self, class_name):
+        """Count instances of a class"""
+        if class_name not in self.classes:
+            print("** class doesn't exist **")
+        else:
+            all_objs = storage.all()
+            count = sum(1 for obj in all_objs.values() if obj.__class__.__name__ == class_name)
+            print(count)
+
+    def do_show(self, arg):
+        """Show the string representation of an instance"""
+        arg_parts = parse(arg)
+        if len(arg_parts) == 0:
+            print("** class name missing **")
+        elif arg_parts[0] not in self.classes:
+            print("** class doesn't exist **")
+        elif len(arg_parts) < 2:
+            print("** instance id missing **")
+        else:
+            obj_id = arg_parts[1]
+            key = f"{arg_parts[0]}.{obj_id}"
+            all_objs = storage.all()
+            if key in all_objs:
+                print(all_objs[key])
+            else:
+                print("** no instance found **")
+
+    def do_destroy(self, arg):
+        """Delete an instance by class name and ID"""
+        arg_parts = parse(arg)
+        if len(arg_parts) == 0:
+            print("** class name missing **")
+        elif arg_parts[0] not in self.classes:
+            print("** class doesn't exist **")
+        elif len(arg_parts) < 2:
+            print("** instance id missing **")
+        else:
+            obj_id = arg_parts[1]
+            key = f"{arg_parts[0]}.{obj_id}"
+            all_objs = storage.all()
+            if key in all_objs:
+                del all_objs[key]
+                storage.save()
+            else:
+                print("** no instance found **")
 
     def do_update(self, arg):
         """Update an instance's attributes"""
@@ -98,7 +149,6 @@ class HBNBCommand(cmd.Cmd):
                     obj.save()
             else:
                 print("** no instance found **")
-
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
