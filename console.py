@@ -2,12 +2,6 @@
 import cmd
 import re
 from shlex import split
-from models.user import User
-from models.state import State
-from models.city import City
-from models.place import Place
-from models.amenity import Amenity
-from models.review import Review
 
 def parse(arg):
     """Parse a string of arguments and return a list of tokens"""
@@ -28,18 +22,9 @@ class HBNBCommand(cmd.Cmd):
     """HBNBCommand command interpreter"""
 
     prompt = "(hbnb) "
-    classes = {
-        "BaseModel": BaseModel,
-        "User": User,
-        "State": State,
-        "City": City,
-        "Place": Place,
-        "Amenity": Amenity,
-        "Review": Review
-    }
 
     def __init__(self):
-        super().__init()
+        super().__init__()
         from models.engine.file_storage import FileStorage
         self.storage = FileStorage()
         self.storage.reload()
