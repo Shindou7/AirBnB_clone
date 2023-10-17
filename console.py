@@ -63,6 +63,8 @@ class HBNBCommand(cmd.Cmd):
                 return self.do_update(f"{class_name} {instance_id} {attribute} {value}")
             elif command == "count":
                 return self.do_count(f"{class_name}")
+            elif command == "all":
+                return self.do_all(f"{class_name}")
         print("*** Unknown syntax: {}".format(arg))
         return False
 
