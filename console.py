@@ -2,7 +2,6 @@
 import cmd
 import re
 from shlex import split
-from models import storage
 from models.base_model import BaseModel
 from models.user import User
 from models.state import State
@@ -10,7 +9,6 @@ from models.city import City
 from models.place import Place
 from models.amenity import Amenity
 from models.review import Review
-
 
 def parse(arg):
     """Parse a string of arguments and return a list of tokens"""
@@ -27,7 +25,6 @@ def parse(arg):
             break
     return tokens
 
-
 class HBNBCommand(cmd.Cmd):
     """HBNBCommand command interpreter"""
 
@@ -41,6 +38,12 @@ class HBNBCommand(cmd.Cmd):
         "Amenity": Amenity,
         "Review": Review
     }
+
+    def __init__(self):
+        super().__init()
+        from models.engine.file_storage import FileStorage
+        self.storage = FileStorage()
+        self.storage.reload()
 
     def emptyline(self):
         """Do nothing when an empty line is entered."""
@@ -72,7 +75,7 @@ class HBNBCommand(cmd.Cmd):
 
     def do_all(self, class_name):
         """Display string representations of instances"""
-        all_objs = storage.all()
+        all_objs = self.storage.all()
         if class_name not in self.classes:
             print("** class doesn't exist **")
         else:
@@ -84,7 +87,7 @@ class HBNBCommand(cmd.Cmd):
         if class_name not in self.classes:
             print("** class doesn't exist **")
         else:
-            all_objs = storage.all()
+            all_objs = self.storage.all()
             count = sum(1 for obj in all_objs.values() if obj.__class__.__name__ == class_name)
             print(count)
 
@@ -100,7 +103,7 @@ class HBNBCommand(cmd.Cmd):
         else:
             obj_id = arg_parts[1]
             key = f"{arg_parts[0]}.{obj_id}"
-            all_objs = storage.all()
+            all_objs = self.storage.all()
             if key in all_objs:
                 print(all_objs[key])
             else:
@@ -118,10 +121,10 @@ class HBNBCommand(cmd.Cmd):
         else:
             obj_id = arg_parts[1]
             key = f"{arg_parts[0]}.{obj_id}"
-            all_objs = storage.all()
+            all_objs = self.storage.all()
             if key in all_objs:
                 del all_objs[key]
-                storage.save()
+                self.storage.save()
             else:
                 print("** no instance found **")
 
@@ -137,7 +140,7 @@ class HBNBCommand(cmd.Cmd):
         else:
             obj_id = arg_parts[1]
             key = f"{arg_parts[0]}.{obj_id}"
-            all_objs = storage.all()
+            all_objs = self.storage.all()
             if key in all_objs:
                 obj = all_objs[key]
                 if len(arg_parts) < 3:
@@ -152,6 +155,5 @@ class HBNBCommand(cmd.Cmd):
             else:
                 print("** no instance found **")
 
-
-if __name__ == "__main":
+if __name__ == "__main__":
     HBNBCommand().cmdloop()
