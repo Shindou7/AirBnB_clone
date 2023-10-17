@@ -49,12 +49,6 @@ class HBNBCommand(cmd.Cmd):
     def default(self, arg):
         """Handle unknown commands"""
         arg_parts = parse(arg)
-        if arg.startswith("User.count()"):
-            return self.do_user_count(arg[len("User.count()"):])
-        if arg.startswith("User.destroy(") and arg.endswith(")"):
-            return self.do_user_destroy(arg[len("User.destroy("):-1])
-        if arg == "User.all()":
-            return self.do_user_all(arg[len("User.all()"):])
         if len(arg_parts) >= 4 and arg_parts[0] in self.classes:
             class_name = arg_parts[0]
             command = arg_parts[1]
@@ -67,6 +61,8 @@ class HBNBCommand(cmd.Cmd):
             elif command == "update" and len(arg_parts) >= 5:
                 value = arg_parts[4]
                 return self.do_update(f"{class_name} {instance_id} {attribute} {value}")
+            elif command == "count":
+                return self.do_count(f"{class_name}")
         print("*** Unknown syntax: {}".format(arg))
         return False
 
@@ -102,14 +98,11 @@ class HBNBCommand(cmd.Cmd):
             print("** instance id missing **")
         else:
             obj_id = arg_parts[1]
-            obj_list = self.classes[arg_parts[0]].all()
-            found = False
-            for obj in obj_list:
-                if obj.id == obj_id:
-                    print(obj)
-                    found = True
-                    break
-            if not found:
+            key = f"{arg_parts[0]}.{obj_id}"
+            all_objs = storage.all()
+            if key in all_objs:
+                print(all_objs[key])
+            else:
                 print("** no instance found **")
 
     def do_destroy(self, arg):
@@ -123,15 +116,12 @@ class HBNBCommand(cmd.Cmd):
             print("** instance id missing **")
         else:
             obj_id = arg_parts[1]
-            obj_list = self.classes[arg_parts[0]].all()
-            found = False
-            for obj in obj_list:
-                if obj.id == obj_id:
-                    obj_list.remove(obj)
-                    storage.save()
-                    found = True
-                    break
-            if not found:
+            key = f"{arg_parts[0]}.{obj_id}"
+            all_objs = storage.all()
+            if key in all_objs:
+                del all_objs[key]
+                storage.save()
+            else:
                 print("** no instance found **")
 
     def do_all(self, arg):
@@ -143,8 +133,9 @@ class HBNBCommand(cmd.Cmd):
         elif arg_parts[0] not in self.classes:
             print("** class doesn't exist **")
         else:
-            obj_list = self.classes[arg_parts[0]].all()
-            print([str(obj) for obj in obj_list])
+            all_objs = storage.all()
+            obj_list = [str(obj) for obj in all_objs.values() if obj.__class__.__name__ == arg_parts[0]]
+            print(obj_list)
 
     def do_count(self, arg):
         """Count instances of a class"""
@@ -154,34 +145,9 @@ class HBNBCommand(cmd.Cmd):
         elif arg_parts[0] not in self.classes:
             print("** class doesn't exist **")
         else:
-            count = len(self.classes[arg_parts[0]].all())
-            print(count)
-
-    def do_user_count(self, arg):
-        """Count instances of User"""
-        count = len([user for user in storage.all(User).values()])
-        print(count)
-
-    def do_user_destroy(self, arg):
-        """Destroy an instance of User by ID"""
-        arg_parts = parse(arg)
-        if len(arg_parts) < 1:
-            print("** instance id missing **")
-        else:
-            obj_id = arg_parts[0]
-            key = f"User.{obj_id}"
             all_objs = storage.all()
-            if key in all_objs:
-                del all_objs[key]
-                storage.save()
-                print("Instance deleted")
-            else:
-                print("** no instance found **")
-
-    def do_user_all(self, arg):
-        """Display all instances of User"""
-        user_list = User.all()
-        print([str(user) for user in user_list])
+            count = sum(1 for obj in all_objs.values() if obj.__class__.__name__ == arg_parts[0])
+            print(count)
 
     def do_update(self, arg):
         """Update an instance's attributes"""
