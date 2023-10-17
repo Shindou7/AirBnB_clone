@@ -103,52 +103,36 @@ class HBNBCommand(cmd.Cmd):
         else:
             print("*** Unknown syntax: show")
 
-
     def do_destroy(self, arg):
         """Delete an instance by class name and ID"""
         arg_parts = parse(arg)
-        if len(arg_parts) == 0:
-            print("** class name missing **")
-        elif arg_parts[0] not in self.classes:
-            print("** class doesn't exist **")
-        elif len(arg_parts) < 2:
-            print("** instance id missing **")
-        else:
-            obj_id = arg_parts[1]
-            key = f"{arg_parts[0]}.{obj_id}"
+        if len(arg_parts) == 2 and arg_parts[0] in self.classes:
+            class_name, obj_id = arg_parts
+            key = f"{class_name}.{obj_id}"
             all_objs = self.storage.all()
             if key in all_objs:
                 del all_objs[key]
                 self.storage.save()
             else:
                 print("** no instance found **")
+        else:
+            print("*** Unknown syntax: destroy")
 
     def do_update(self, arg):
         """Update an instance's attributes"""
         arg_parts = parse(arg)
-        if len(arg_parts) == 0:
-            print("** class name missing **")
-        elif arg_parts[0] not in self.classes:
-            print("** class doesn't exist **")
-        elif len(arg_parts) < 2:
-            print("** instance id missing **")
-        else:
-            obj_id = arg_parts[1]
-            key = f"{arg_parts[0]}.{obj_id}"
+        if len(arg_parts) == 4 and arg_parts[0] in self.classes:
+            class_name, obj_id, attribute, value = arg_parts
+            key = f"{class_name}.{obj_id}"
             all_objs = self.storage.all()
             if key in all_objs:
                 obj = all_objs[key]
-                if len(arg_parts) < 3:
-                    print("** attribute name missing **")
-                elif len(arg_parts) < 4:
-                    print("** value missing **")
-                else:
-                    attr_name = arg_parts[2]
-                    attr_value = arg_parts[3]
-                    setattr(obj, attr_name, attr_value)
-                    obj.save()
+                setattr(obj, attribute, value)
+                obj.save()
             else:
                 print("** no instance found **")
+        else:
+            print("*** Unknown syntax: update")
 
 if __name__ == "__main__":
     HBNBCommand().cmdloop()
