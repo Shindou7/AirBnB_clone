@@ -96,11 +96,14 @@ class HBNBCommand(cmd.Cmd):
             print("** instance id missing **")
         else:
             obj_id = arg_parts[1]
-            key = f"{arg_parts[0]}.{obj_id}"
-            all_objs = storage.all()
-            if key in all_objs:
-                print(all_objs[key])
-            else:
+            obj_list = self.classes[arg_parts[0]].all()
+            found = False
+            for obj in obj_list:
+                if obj.id == obj_id:
+                    print(obj)
+                    found = True
+                    break
+            if not found:
                 print("** no instance found **")
 
     def do_destroy(self, arg):
@@ -114,12 +117,15 @@ class HBNBCommand(cmd.Cmd):
             print("** instance id missing **")
         else:
             obj_id = arg_parts[1]
-            key = f"{arg_parts[0]}.{obj_id}"
-            all_objs = storage.all()
-            if key in all_objs:
-                del all_objs[key]
-                storage.save()
-            else:
+            obj_list = self.classes[arg_parts[0]].all()
+            found = False
+            for obj in obj_list:
+                if obj.id == obj_id:
+                    obj_list.remove(obj)
+                    storage.save()
+                    found = True
+                    break
+            if not found:
                 print("** no instance found **")
 
     def do_all(self, arg):
@@ -131,9 +137,8 @@ class HBNBCommand(cmd.Cmd):
         elif arg_parts[0] not in self.classes:
             print("** class doesn't exist **")
         else:
-            all_objs = storage.all()
-            obj_list = [str(obj) for obj in all_objs.values() if obj.__class__.__name__ == arg_parts[0]]
-            print(obj_list)
+            obj_list = self.classes[arg_parts[0]].all()  # Use .all() to get all instances of a class
+            print([str(obj) for obj in obj_list])
 
     def do_count(self, arg):
         """Count instances of a class"""
@@ -143,9 +148,9 @@ class HBNBCommand(cmd.Cmd):
         elif arg_parts[0] not in self.classes:
             print("** class doesn't exist **")
         else:
-            all_objs = storage.all()
-            count = sum(1 for obj in all_objs.values() if obj.__class__.__name__ == arg_parts[0])
+            count = len(self.classes[arg_parts[0]].all())  # Use .all() to get all instances of a class
             print(count)
+  
 
     def do_update(self, arg):
         """Update an instance's attributes"""
@@ -173,27 +178,6 @@ class HBNBCommand(cmd.Cmd):
                     obj.save()
             else:
                 print("** no instance found **")
-
-    def do_User(self, arg):
-        """Handle User commands"""
-        args = parse(arg)
-        if len(args) < 1:
-            print("** Missing command for User")
-            return
-
-        command = args[0]
-        if command == "all":
-            self.do_all("User")
-        elif command == "count":
-            self.do_count("User")
-        elif command == "show" and len(args) > 1:
-            self.do_show("User " + args[1])
-        elif command == "destroy" and len(args) > 1:
-            self.do_destroy("User " + args[1])
-        elif command == "update" and len(args) > 3:
-            self.do_update("User " + ' '.join(args[1:]))
-        else:
-            print("** Unknown command: User." + command)
 
 
 if __name__ == "__main__":
