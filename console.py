@@ -49,18 +49,19 @@ class HBNBCommand(cmd.Cmd):
     def default(self, arg):
         """Handle unknown commands"""
         arg_parts = parse(arg)
-        if len(arg_parts) >= 4 and arg_parts[0] in self.classes:
+        if len(arg_parts) >= 2 and arg_parts[0] in self.classes:
             class_name = arg_parts[0]
             command = arg_parts[1]
-            instance_id = arg_parts[2]
-            attribute = arg_parts[3]
-            if command == "show":
+            if command == "all":
+                return self.do_all(class_name)
+            elif command == "count":
+                return self.do_count(class_name)
+            elif command == "show" and len(arg_parts) >= 3:
+                instance_id = arg_parts[2]
                 return self.do_show(f"{class_name} {instance_id}")
-            elif command == "destroy":
+            elif command == "destroy" and len(arg_parts) >= 3:
+                instance_id = arg_parts[2]
                 return self.do_destroy(f"{class_name} {instance_id}")
-            elif command == "update" and len(arg_parts) >= 5:
-                value = arg_parts[4]
-                return self.do_update(f"{class_name} {instance_id} {attribute} {value}")
         print("*** Unknown syntax: {}".format(arg))
         return False
 
@@ -124,27 +125,20 @@ class HBNBCommand(cmd.Cmd):
 
     def do_all(self, arg):
         """Display string representations of instances"""
-        arg_parts = parse(arg)
-        if len(arg_parts) == 0:
-            all_objs = storage.all()
-            print([str(obj) for obj in all_objs.values()])
-        elif arg_parts[0] not in self.classes:
+        if arg not in self.classes:
             print("** class doesn't exist **")
         else:
             all_objs = storage.all()
-            obj_list = [str(obj) for obj in all_objs.values() if obj.__class__.__name__ == arg_parts[0]]
+            obj_list = [str(obj) for obj in all_objs.values() if obj.__class__.__name__ == arg]
             print(obj_list)
 
     def do_count(self, arg):
         """Count instances of a class"""
-        arg_parts = parse(arg)
-        if len(arg_parts) == 0:
-            print("** class name missing **")
-        elif arg_parts[0] not in self.classes:
+        if arg not in self.classes:
             print("** class doesn't exist **")
         else:
             all_objs = storage.all()
-            count = sum(1 for obj in all_objs.values() if obj.__class__.__name__ == arg_parts[0])
+            count = sum(1 for obj in all_objs.values() if obj.__class__.__name__ == arg)
             print(count)
 
     def do_update(self, arg):
